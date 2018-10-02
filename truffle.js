@@ -1,51 +1,40 @@
-/*
- * NB: since truffle-hdwallet-provider 0.0.5 you must wrap HDWallet providers in a
- * function when declaring them. Failure to do so will cause commands to hang. ex:
- * ```
- * mainnet: {
- *     provider: function() {
- *       return new HDWalletProvider(mnemonic, 'https://mainnet.infura.io/<infura-key>')
- *     },
- *     network_id: '1',
- *     gas: 4500000,
- *     gasPrice: 10000000000,
- *   },
- */
- var HDWalletProvider = require("truffle-hdwallet-provider");
- var mnemonic = "door sadness shallow hire fame lesson wonder scan donate caution apple chicken"; //new mnemonic to generate
+// Allows us to use ES6 in our migrations and tests.
+require('babel-register')({
+  ignore: /node_modules\/(?!test\/helpers)/
+});
+require('babel-polyfill');
+const HDWalletProvider = require("truffle-hdwallet-provider");
 
- // Allows us to use ES6 in our migrations and tests.
- require('babel-register')({
-   ignore: /node_modules\/(?!test\/helpers)/
- });
- require('babel-polyfill');
+ // Infura API key
+const infura_apikey_dev = process.env.DSLA_INFURA_APIKEY_DEV;
+const infura_apikey_prod = process.env.DSLA_INFURA_APIKEY_PROD;
+
+// 12 mnemonic words that represents the account that will own the contract
+const mnemonic_dev = process.env.DSLA_MNEMONIC_DEV;
+const mnemonic_prod = process.env.DSLA_MNEMONIC_PROD;
+
  module.exports = {
    networks: {
-     mainnet: {
-       provider:  function() {
-         return new HDWalletProvider(mnemonic, "https://mainnet.infura.io/M61bTRVBOvpealSVYTxe") //infura key to generate
-       },
-       network_id: 1
-     },
-     ropsten: {
-       provider: function() {
-         return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/M61bTRVBOvpealSVYTxe") //infura key to generate
-       },
-       network_id: 3,
-       gas: 4712388
-     },
-     ganache: {
-      host: "localhost",
-      port: 7545,
-      network_id: "*",
-      gas: 4712388
-    },
-    development: {
-      host: "localhost",
-      port: 8545,
-      network_id: "*"
-    }
+   development: {
+     host: "localhost",
+     port: 8545,
+     network_id: "*", // Match any network id
    },
+   ropsten: {
+     provider: function() {
+       return new HDWalletProvider(mnemonic_dev, "https://ropsten.infura.io/v3/" + infura_apikey_dev);
+     },
+     network_id: "3",
+     gas: 4612388
+   },
+   mainnet: {
+     provider: function() {
+       return new HDWalletProvider(mnemonic_prod, "https://mainnet.infura.io/v3/" + infura_apikey_prod);
+     },
+     network_id: "1",
+     gas: 4612388
+   }
+  },
    rpc: {
          host: 'localhost',
          post:8080
